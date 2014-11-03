@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  title: MyString
+  pharse: MyString
+  mean: MyString
+  learn_date: 2014-11-03
+  pronunciation: MyString
+  example: MyString
+
+two:
+  title: MyString
+  pharse: MyString
+  mean: MyString
+  learn_date: 2014-11-03
+  pronunciation: MyString
+  example: MyString
