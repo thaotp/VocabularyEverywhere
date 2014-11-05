@@ -17,11 +17,8 @@
     <% @words.each do |word| %>
       <tr>
         <td><%= word.title %></td>
-        <td><%= word.pharse %></td>
-        <td><%= word.mean %></td>
         <td><%= word.learn_date %></td>
-        <td><%= word.pronunciation %></td>
-        <td><%= word.example %></td>
+        <td><%= word.content %></td>
         <td><%= link_to 'Show', word %></td>
         <td><%= link_to 'Edit', edit_word_path(word) %></td>
         <td><%= link_to 'Destroy', word, method: :delete, data: { confirm: 'Are you sure?' } %></td>

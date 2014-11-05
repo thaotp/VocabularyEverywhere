@@ -1,0 +1,1 @@
+CAMBRIDGE_URL = "http://dictionary.cambridge.org/dictionary/american-english/"

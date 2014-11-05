@@ -1,0 +1,15 @@
+{
+"name":"VocaEvery",
+"description":"Vocabulary Everywhere",
+"version":"1",
+"manifest_version":2,
+"permissions": [
+  "tabs", "http://*/*", "https://*/*"
+],
+"content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["jquery.min.js","myscript.js"]
+    }
+  ]
+}

@@ -24,22 +24,14 @@ class WordsController < ApplicationController
   # POST /words
   # POST /words.json
   def create
-    @word = Word.new(word_params)
-
-    cambride_url = "http://dictionary.cambridge.org/dictionary/american-english/"
-    word_link = cambride_url.concat(word_params[:title])
-    page = Nokogiri::HTML(RestClient.get(cambride_url))
-    page.css("div.pos-body .sense-block").each do |block|
-      p '-------------------------'
-      p block.text
-    end
-
+    body,success = get_word word_params[:title]
+    @word = Word.new(title: word_params[:title], content: body)
     respond_to do |format|
-      if true
+      if success && body && @word.save
         format.html { redirect_to @word, notice: 'Word was successfully created.' }
         format.json { render :show, status: :created, location: @word }
       else
-        format.html { render :new }
+        format.html { render :new, :notice => 'Cant get word.'}
         format.json { render json: @word.errors, status: :unprocessable_entity }
       end
     end
@@ -69,6 +61,17 @@ class WordsController < ApplicationController
     end
   end
 
+  def retrive_word
+    @word = Word.offset(rand(Word.count)).first
+    if @word.present?
+      word_body = YAML.load  @word.to_json(:only => [:title, :content, :learn_date])
+      render :json => { :success => true, :word => word_body }
+    else
+      render :json => { :success => false }
+    end
+    
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_word
@@ -77,6 +80,41 @@ class WordsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def word_params
-      params.require(:word).permit(:title, :pharse, :mean, :learn_date, :pronunciation, :example)
+      params.require(:word).permit(:title)
+    end
+
+    def get_word url
+      success = true
+      word_link = CAMBRIDGE_URL + word_params[:title].gsub(' ','-')
+      begin
+         page = Nokogiri::HTML(RestClient.get(word_link))
+      rescue => e
+        success = false
+        return nil, success 
+      end
+      body = {word: []}
+      body_result = page.css('div.di-body')
+      body_result.css('div.pos-block').each do |pos_block|
+        word = {}
+        posgram = pos_block.css('.pos-header').css('.posgram').text
+        word[:pharse] = posgram 
+        pronunciation = pos_block.css('.pos-header').css('.pron').text
+        word[:pronunciation] = pronunciation
+        word[:content] = []
+        pos_block.css('.pos-body').css('.def-block').each do |def_block|   
+          mean = def_block.css('.def').text
+          block = {mean: mean}
+          def_block.css('.examp').each do |examp|
+             block.merge!({example: examp.text})
+          end
+          word[:content] << block
+        end
+        body[:word] << word
+      end
+
+      if body[:word].empty?
+        success = false
+      end
+      return body, success
     end
 end

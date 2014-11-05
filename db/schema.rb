@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141103000318) do
+ActiveRecord::Schema.define(version: 20141103152829) do
 
   create_table "high_scores", force: true do |t|
     t.string   "game"
@@ -22,13 +22,10 @@ ActiveRecord::Schema.define(version: 20141103000318) do
 
   create_table "words", force: true do |t|
     t.string   "title"
-    t.string   "pharse"
-    t.string   "mean"
     t.date     "learn_date"
-    t.string   "pronunciation"
-    t.string   "example"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "content"
   end
 
 end
