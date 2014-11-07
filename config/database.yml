@@ -48,7 +48,10 @@ test:
 #     url: <%= ENV['DATABASE_URL'] %>
 #
 production:
-  <<: *default
+  adapter: postgresql
+  encoding: unicode
+  # For details on connection pooling, see rails configuration guide
+  # http://guides.rubyonrails.org/configuring.html#database-pooling
+  pool: 5
   database: vocal_production
-  username: vocal
-  password: <%= ENV['VOCAL_DATABASE_PASSWORD'] %>
+  # password: <%= ENV['VOCAL_DATABASE_PASSWORD'] %>
