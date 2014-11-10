@@ -62,14 +62,14 @@ class WordsController < ApplicationController
   end
 
   def retrive_word
-    @word = Word.offset(rand(Word.count)).first
+    @word = Word.all.shuffle.first
     if @word.present?
       word_body = YAML.load  @word.to_json(:only => [:title, :content, :learn_date])
       render :json => { :success => true, :word => word_body }
     else
       render :json => { :success => false }
     end
-    
+
   end
 
   private
@@ -90,18 +90,18 @@ class WordsController < ApplicationController
          page = Nokogiri::HTML(RestClient.get(word_link))
       rescue => e
         success = false
-        return nil, success 
+        return nil, success
       end
       body = {word: []}
       body_result = page.css('div.di-body')
       body_result.css('div.pos-block').each do |pos_block|
         word = {}
         posgram = pos_block.css('.pos-header').css('.posgram').text
-        word[:pharse] = posgram 
+        word[:pharse] = posgram
         pronunciation = pos_block.css('.pos-header').css('.pron').text
         word[:pronunciation] = pronunciation
         word[:content] = []
-        pos_block.css('.pos-body').css('.def-block').each do |def_block|   
+        pos_block.css('.pos-body').css('.def-block').each do |def_block|
           mean = def_block.css('.def').text
           block = {mean: mean}
           def_block.css('.examp').each do |examp|
