@@ -28,7 +28,7 @@ class WordsController < ApplicationController
     @word = Word.new(title: word_params[:title], content: body)
     respond_to do |format|
       if success && body && @word.save
-        format.html { redirect_to @word, notice: 'Word was successfully created.' }
+        format.html { redirect_to new_word_path, notice: 'Word was successfully created.' }
         format.json { render :show, status: :created, location: @word }
       else
         format.html { render :new, :notice => 'Cant get word.'}
@@ -62,10 +62,17 @@ class WordsController < ApplicationController
   end
 
   def retrive_word
+    Rails.cache.clear
     @word = Word.all.shuffle.first
+    if params[:words].present? && params[:words].size != Word.all.size
+      while params[:words].include? @word.title
+        @word = Word.all.shuffle.first
+      end
+    end
+
     if @word.present?
       word_body = YAML.load  @word.to_json(:only => [:title, :content, :learn_date])
-      render :json => { :success => true, :word => word_body }
+      render :json => { :success => true, :word => word_body, total: Word.all.size }
     else
       render :json => { :success => false }
     end
