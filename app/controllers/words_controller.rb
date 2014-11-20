@@ -64,11 +64,11 @@ class WordsController < ApplicationController
   def retrive_word
     Rails.cache.clear
     @word = Word.all.shuffle.first
-    if params[:words].present? && params[:words].size != Word.all.size
-      while params[:words].include? @word.title
-        @word = Word.all.shuffle.first
-      end
-    end
+    # if params[:words].present? && params[:words].size != Word.all.size
+    #   while params[:words].include? @word.title
+    #     @word = Word.all.shuffle.first
+    #   end
+    # end
 
     if @word.present?
       word_body = YAML.load  @word.to_json(:only => [:title, :content, :learn_date])
